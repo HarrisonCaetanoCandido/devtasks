@@ -184,7 +184,7 @@ And join the Nx community:
 
 ---
 
-## Tecnologias
+## Technologies
 
 ### Monorepo
 
@@ -192,7 +192,7 @@ And join the Nx community:
 
 ### Front‑End (SPA)
 
-* **React v18**
+* **React**
 * **Webpack** (as a module packager)
 * **TailwindCSS** + **Material UI** (Ready components)
 * **Zustand** + React Hooks (Client-state)
@@ -367,7 +367,7 @@ npm install @mui/material @emotion/react @emotion/styled
 
 npm install zustand @tanstack/react-query @trpc/client
 
-nx generate @nx/express:app backend
+nx generate @nx/node:app backend
 
 npm install @trpc/server zod reflect-metadata typeorm sqlite3
 
