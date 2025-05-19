@@ -39,6 +39,9 @@
 4. **Dashboard** to visualize metrics and status/categories charts
 5. **Categorization**: tags or categorias to organize tasks
 
+## ER Diagram
+![alt text](/imgs/db-diagram.png)
+
 ---
 
 ## Build
@@ -75,8 +78,6 @@ It is a monorepo framework, that builds an unified environment to develop many d
 - Dependencies management;
 - Code generation with smart scaffolding;
 - Build and test caching;
-
-![alt text](image.png)
 
 **Generators:** Commands to create libs, apps, routes etc;
 
