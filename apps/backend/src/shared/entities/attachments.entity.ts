@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
-import { Task } from './task';
+import { Task } from './task.entity';
 
 @Entity('attachments')
 export class Attachments {
