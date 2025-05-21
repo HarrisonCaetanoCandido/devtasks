@@ -1,15 +1,9 @@
 import { CreateExpressContextOptions } from '@trpc/server/adapters/express';
-
-
-async function getTask(taskId: number) {
-    // logica pra buscar no banco
-    return { taskId: 123, taskName: 'name', taskDesc: 'description' };
-}
+import { AppDataSource } from '../config/datasource';
 
 // it allows to auth users to use some resources and connect to databases
-export const createContext = ({ req, res }: CreateExpressContextOptions) => {
-    getTask(1);
-    return { req, res };
-};
+export const createContext = ({ req, res }: CreateExpressContextOptions) => ({
+    db: AppDataSource, // context
+});
 
-export type Context = ReturnType<typeof createContext>;
+export type Context = Awaited<ReturnType<typeof createContext>>;

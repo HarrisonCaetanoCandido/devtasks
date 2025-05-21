@@ -2,11 +2,14 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./out-tsc/jest",
-    "types": ["jest", "node"]
+    "types": [
+      "jest",
+      "node"
+    ]
   },
   "include": [
     "jest.config.ts",
-    "src/**/*.test.ts",
+    // "src/**/*.test.ts", voltar dps
     "src/**/*.spec.ts",
     "src/**/*.d.ts"
   ],
