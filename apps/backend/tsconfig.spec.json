@@ -9,7 +9,7 @@
   },
   "include": [
     "jest.config.ts",
-    // "src/**/*.test.ts", voltar dps
+    "src/**/*.test.ts",
     "src/**/*.spec.ts",
     "src/**/*.d.ts"
   ],

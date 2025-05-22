@@ -1,0 +1,133 @@
+import { DataSource } from 'typeorm';
+import { AppDataSource } from '../config/datasource';
+import { StatusTypeService, CreateStatusTypeInputSchema } from '../../modules/management/services/status.service'; 
+import { Status } from '../../shared/entities/status.entity';
+
+beforeAll(async () => {
+  if (!AppDataSource.isInitialized) {
+    await AppDataSource.initialize();
+  }
+
+  console.log("SQLite3 test database connected and synchronized for StatusTypesService tests.");
+});
+
+afterAll(async () => {
+  if (AppDataSource && AppDataSource.isInitialized) {
+    await AppDataSource.destroy();
+    console.log("Test database connection closed.");
+  }
+});
+
+beforeEach(async () => {
+  if (AppDataSource && AppDataSource.isInitialized) {
+    const statusRepository = AppDataSource.getRepository(Status);
+    await statusRepository.clear();
+  }
+});
+
+describe('StatusTypeService - Integration Tests', () => {
+  let statusService: StatusTypeService;
+
+  beforeEach(() => {
+    statusService = new StatusTypeService();
+  });
+
+  it('1. should create a new status type', async () => {
+    console.log("--- Teste Jest: Create Status ---");
+    const inputData = { status: 'Pendente - Jest Test' };
+    const result = CreateStatusTypeInputSchema.safeParse(inputData);
+    expect(result.success).toBe(true);
+
+    if (result.success) {
+      const newStatus = await statusService.create(result.data);
+      expect(newStatus).toBeDefined();
+      expect(newStatus.id).toBeDefined();
+      expect(newStatus.status).toBe(inputData.status);
+      console.log("Status created: ", newStatus);
+    }
+  });
+
+  it('2. should throw an error when creating a duplicate status type', async () => {
+    console.log("--- Teste Jest: Create Duplicate Status ---");
+    const inputData = { status: 'Duplicado - Jest Test' };
+    await statusService.create(inputData);
+
+    expect.assertions(1);
+    try {
+      await statusService.create(inputData);
+    } catch (e: any) {
+      expect(e.message).toContain('já existe'); 
+      console.warn("Caught expected error for duplicate status");
+    }
+  });
+
+  it('3. should list all status types', async () => {
+    console.log('--- Teste Jest: List All Status ---');
+    await statusService.create({ status: 'Status A' });
+    await statusService.create({ status: 'Status B' });
+
+    const allStatus = await statusService.getAll();
+    expect(allStatus).toBeInstanceOf(Array);
+    expect(allStatus.length).toBe(2);
+    expect(allStatus.some(s => s.status === 'Status A')).toBe(true);
+    expect(allStatus.some(s => s.status === 'Status B')).toBe(true);
+    console.log("All status: ", allStatus);
+  });
+
+  it('4. should find a status type by ID', async () => {
+    const createdStatus = await statusService.create({ status: 'Para Buscar - Jest' });
+    expect(createdStatus.id).toBeDefined();
+
+    console.log(`--- Teste Jest: Search ID Status ${createdStatus.id}---`);
+    const foundStatus = await statusService.getById(createdStatus.id!);
+    expect(foundStatus).toBeDefined();
+    expect(foundStatus!.id).toBe(createdStatus.id);
+    expect(foundStatus!.status).toBe('Para Buscar - Jest');
+    console.log("Status find by ID: ", foundStatus);
+  });
+
+   it('should return null when finding a status type by a non-existent ID', async () => {
+    const foundStatus = await statusService.getById('non-existent-uuid');
+    expect(foundStatus).toBeNull();
+  });
+
+
+  it('5. should update a status type', async () => {
+    const newStatus = await statusService.create({ status: 'Original - Jest' });
+    expect(newStatus.id).toBeDefined();
+
+    console.log(`--- Teste Jest: Update Status with ID ${newStatus.id}`);
+    const updatedData = { id: newStatus.id!, status: 'Atualizado - Jest' };
+    const updatedStatus = await statusService.update(updatedData);
+
+    expect(updatedStatus).toBeDefined();
+    expect(updatedStatus.id).toBe(newStatus.id);
+    expect(updatedStatus.status).toBe(updatedData.status);
+    console.log("Updated Status: ", updatedStatus);
+
+    const fetchedAfterUpdate = await statusService.getById(newStatus.id!);
+    expect(fetchedAfterUpdate!.status).toBe(updatedData.status);
+  });
+
+  it('6. should delete a status type', async () => {
+    const newStatus = await statusService.create({ status: 'Para Deletar - Jest' });
+    expect(newStatus.id).toBeDefined();
+
+    console.log(`--- Teste Jest: Delete Status ${newStatus.id} ---`);
+    await statusService.delete(newStatus.id!);
+    console.log(`Status with ID ${newStatus.id} was targeted for deletion`);
+
+    const deletedStatus = await statusService.getById(newStatus.id!);
+    expect(deletedStatus).toBeNull(); 
+    console.log("The Status was deleted successfully (verified by getById returning null)");
+  });
+
+  it('should throw an error when trying to delete a non-existent status type', async () => {
+    expect.assertions(1);
+    try {
+      await statusService.delete('non-existent-uuid');
+    } catch (e: any) {
+      expect(e.message).toContain('não encontrado');
+    }
+  });
+});
