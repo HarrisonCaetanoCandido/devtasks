@@ -83,8 +83,10 @@ export async function startStatusTestServer() {
 
         await testStatusService();
 
+        await AppDataSource.destroy();
+
     } catch (err: any) {
-        console.error("Start Test Server Failed: ", err);
+        console.error("Start Status Test Server Failed: ", err);
         process.exit(1);
     }
 }
