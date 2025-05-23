@@ -6,6 +6,8 @@ import 'reflect-metadata';
 // import { appRouter } from './trpc/router';
 // import { createContext } from './trpc/context';
 import { startStatusTestServer } from './smoke_tests/status-service.test';
+import { startTaskTestServer } from './smoke_tests/task-service.test';
+import { startAttachmentTestServer } from './smoke_tests/attachments-service.test';
 
 const host = process.env.HOST ?? 'localhost';
 const port = process.env.PORT ? Number(process.env.PORT) : 3000;
@@ -39,5 +41,12 @@ const app = express();
 
 app.listen(port, host, () => {
   console.log(`[ ready ] http://${host}:${port}`);
-  startStatusTestServer();
+  const b = true;
+
+  if (!b) {
+    startStatusTestServer();
+    startTaskTestServer();
+  }
+  startAttachmentTestServer();
+
 });

@@ -11,7 +11,7 @@ export class Attachments {
 
     // This prop stores the related object and its the many side of the relation
     @ManyToOne(() => Task, (task) => task.attachs, {
-        nullable: false,
+        // nullable: true,
         onDelete: 'CASCADE'
     })
     @JoinColumn({ name: 'task_id' })
